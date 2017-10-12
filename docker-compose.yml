@@ -1,0 +1,23 @@
+version: '2.1'
+
+services:
+  web:
+    image: jmartinm/flask-url-shortener
+    command: bash -c "python scripts/init_db.py && gunicorn -b 0.0.0.0:5000 url_shortener.wsgi"
+    ports:
+      - "5000:5000"
+    links:
+      - redis
+      - database
+    volumes:
+      - ${PWD}:/app/
+
+  redis:
+    image: redis:3.2.3
+
+  database:
+    image: postgres:9.4.5
+    environment:
+      - POSTGRES_PASSWORD=babylon
+      - POSTGRES_USER=babylon
+      - PGDATA=/var/lib/postgresql/data/pgdata
